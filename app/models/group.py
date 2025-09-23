@@ -7,3 +7,4 @@ class Group(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, comment="Group identifier, e.g. MT23_10")
     course_id = Column(Integer, ForeignKey("courses.id"), nullable=False)
+    
