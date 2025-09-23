@@ -18,14 +18,7 @@ class Student(Base):
     location = Column(String, comment="Dormitory location", nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, comment="Record creation timestamp") 
 
-    __table_args__ = (
-        CheckConstraint('full_name <> ""', name='check_full_name_not_empty'),
-        CheckConstraint('students_number <> ""', name='check_students_number_not_empty'),
-        CheckConstraint('home_full_name <> ""', name='check_home_full_name_not_empty'),
-        CheckConstraint('home_number <> ""', name='check_home_number_not_empty'),
-        CheckConstraint('location <> ""', name='check_location_not_empty'),
-    )
-
+   
 class StudentUpdate(BaseModel):
     full_name: Optional[str] = None
     course_id: Optional[int] = None

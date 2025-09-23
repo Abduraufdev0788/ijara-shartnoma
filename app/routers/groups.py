@@ -9,13 +9,12 @@ router = APIRouter(
     tags=["groups"]
 )
 
-# Barcha guruhlar
+
 @router.get("/")
 def get_groups(db: Session = Depends(get_db)):
     groups = db.query(Group).all()
     return groups
 
-# Ma'lum kursdagi guruhlar
 @router.get("/course/{course_id}")
 def get_groups_by_course(course_id: int, db: Session = Depends(get_db)):
     groups = db.query(Group).filter(Group.course_id == course_id).all()
