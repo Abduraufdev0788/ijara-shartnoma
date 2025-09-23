@@ -4,9 +4,9 @@ from datetime import datetime
 
 class StudentCreate(BaseModel):
     full_name: str
+    students_number: str
     course_id: int
     group_id: int
-    students_number: str
     price: int
     home_full_name: str
     home_number: str

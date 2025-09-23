@@ -17,13 +17,6 @@ def get_students(db: Session = Depends(get_db)):
     students = db.query(Student).all()
     return students
 
-
-@router.get("/group/{group_id}")
-def get_students_by_group(group_id: int, db: Session = Depends(get_db)):
-    students = db.query(Student).filter(Student.group_id == group_id).all()
-    return students
-
-
 @router.post("/")
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
     new_student = Student(
@@ -42,16 +35,15 @@ def create_student(student: StudentCreate, db: Session = Depends(get_db)):
     return new_student
 
 @router.put("/{student_id}")
-def update_student(student_id: int, student: StudentUpdate, db: Session = Depends(get_db)):
-    db_student = db.query(Student).filter(Student.id == student_id).first()
-    if not db_student:
+def update_student(student_id: int, student_update: StudentUpdate, db: Session = Depends(get_db)):
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
         raise HTTPException(status_code=404, detail="Student not found")
-
-
-    update_data = student.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_student, key, value)
-
+    
+    for var, value in vars(student_update).items():
+        if value is not None:
+            setattr(student, var, value)
+    
     db.commit()
-    db.refresh(db_student)
-    return db_student
+    db.refresh(student)
+    return student

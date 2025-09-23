@@ -12,6 +12,7 @@ DATABASE_URL = URL.create(
     database=config.DB_NAME
 )
 
+
 engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
