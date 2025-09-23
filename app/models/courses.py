@@ -8,4 +8,4 @@ class Course(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
 
-groups = relationship("Group", back_populates="course", cascade="all, delete-orphan")
+    groups = relationship("Group", back_populates="course", cascade="all, delete-orphan")

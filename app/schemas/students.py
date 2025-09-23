@@ -1,43 +1,30 @@
 from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
 
-class StudentCreate(BaseModel):
+class StudentBase(BaseModel):
     full_name: str
-    students_number: str
-    course_id: int
     group_id: int
+    students_number: str
     price: int
     home_full_name: str
     home_number: str
     location: str
-    email: Optional[str] = None
 
+class StudentCreate(StudentBase):
+    pass
 
 class StudentUpdate(BaseModel):
-    full_name: Optional[str] = None
-    course_id: Optional[int] = None
-    group_id: Optional[int] = None
-    students_number: Optional[str] = None
-    price: Optional[int] = None
-    home_full_name: Optional[str] = None
-    home_number: Optional[str] = None
-    location: Optional[str] = None
-    email: Optional[str] = None
+    full_name: str | None = None
+    group_id: int | None = None
+    students_number: str | None = None
+    price: int | None = None
+    home_full_name: str | None = None
+    home_number: str | None = None
+    location: str | None = None
 
-
-class StudentResponse(BaseModel):
+class StudentOut(StudentBase):
     id: int
-    full_name: str
-    course_id: int
-    group_id: int
-    students_number: str
-    price: int
-    home_full_name: str
-    home_number: str
-    location: str
-    email: Optional[str] = None
     created_at: datetime
 
     class Config:
-        orm_mode = True 
+        orm_mode = True
