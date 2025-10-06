@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class StudentBase(BaseModel):
     full_name: str
@@ -14,17 +15,31 @@ class StudentCreate(StudentBase):
     pass
 
 class StudentUpdate(BaseModel):
-    full_name: str | None = None
-    group_id: int | None = None
-    students_number: str | None = None
-    price: int | None = None
-    home_full_name: str | None = None
-    home_number: str | None = None
-    location: str | None = None
+    full_name: Optional[str] = None
+    group_id: Optional[int] = None
+    students_number: Optional[str] = None
+    price: Optional[int] = None
+    home_full_name: Optional[str] = None
+    home_number: Optional[str] = None
+    location: Optional[str] = None
 
-class StudentOut(StudentBase):
+class StudentResponse(StudentBase):
     id: int
     created_at: datetime
-
+    
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+# Group ma'lumotlari bilan student
+class GroupInfo(BaseModel):
+    id: int
+    name: str
+    
+    class Config:
+        from_attributes = True
+
+class StudentWithGroupResponse(StudentResponse):
+    group: Optional[GroupInfo] = None
+    
+    class Config:
+        from_attributes = True

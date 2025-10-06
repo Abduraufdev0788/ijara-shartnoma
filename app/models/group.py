@@ -10,5 +10,4 @@ class Group(Base):
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
 
     course = relationship("Course", back_populates="groups")
-    students = relationship("Student", back_populates="group", cascade="all, delete-orphan")
-
+    students = relationship("Student", back_populates="group", lazy="dynamic")

@@ -23,4 +23,3 @@ class Student(Base):
     
     group = relationship("Group", back_populates="students")
     
-

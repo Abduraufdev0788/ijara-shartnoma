@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-
+from typing import List
+from .students import StudentResponse
 
 class GroupBase(BaseModel):
     name: str
@@ -8,14 +9,13 @@ class GroupBase(BaseModel):
 class GroupCreate(GroupBase):
     pass
 
-
 class GroupUpdate(BaseModel):
     name: str | None = None
     course_id: int | None = None
 
-
-class GroupOut(GroupBase):
+class GroupResponse(GroupBase):
     id: int
-
+    students: List[StudentResponse] = []
+    
     class Config:
-        from_attributes = True   
+        from_attributes = True
