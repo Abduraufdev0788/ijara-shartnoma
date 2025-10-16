@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
-from typing import List
+from typing import List, Optional
 from ..database import get_db
 from ..models.students import Student
 from ..models.group import Group
@@ -8,13 +8,19 @@ from ..schemas.students import StudentCreate, StudentUpdate, StudentResponse, St
 
 router = APIRouter(prefix="/students", tags=["students"])
 
-# GET all students with group info
+# GET all or filter by id
 @router.get("/", response_model=List[StudentWithGroupResponse])
-def get_students(db: Session = Depends(get_db)):
-    students = db.query(Student).options(joinedload(Student.group)).all()
-    return students
+def get_students(id: Optional[int] = Query(None), db: Session = Depends(get_db)):
+    query = db.query(Student).options(joinedload(Student.group))
+    if id:
+        query = query.filter(Student.id == id)
+        students = query.all()
+        if not students:
+            raise HTTPException(status_code=404, detail="Student not found")
+        return students
+    return query.all()
 
-# GET single student with group info
+# GET single student
 @router.get("/{student_id}", response_model=StudentWithGroupResponse)
 def get_student(student_id: int, db: Session = Depends(get_db)):
     student = db.query(Student).options(joinedload(Student.group)).filter(Student.id == student_id).first()
@@ -25,12 +31,9 @@ def get_student(student_id: int, db: Session = Depends(get_db)):
 # POST create student
 @router.post("/", response_model=StudentResponse)
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
-    # Student raqami takrorlanmasligini tekshirish
     db_student = db.query(Student).filter(Student.students_number == student.students_number).first()
     if db_student:
         raise HTTPException(status_code=400, detail="Student number already exists")
-
-    # Group mavjudligini tekshirish
     group = db.query(Group).filter(Group.id == student.group_id).first()
     if not group:
         raise HTTPException(status_code=404, detail="Group not found")
@@ -49,6 +52,7 @@ def create_student(student: StudentCreate, db: Session = Depends(get_db)):
     db.refresh(new_student)
     return new_student
 
+
 # PUT update student
 @router.put("/{student_id}", response_model=StudentResponse)
 def update_student(student_id: int, student_update: StudentUpdate, db: Session = Depends(get_db)):
@@ -66,7 +70,6 @@ def update_student(student_id: int, student_update: StudentUpdate, db: Session =
         student.students_number = student_update.students_number
 
     if student_update.group_id:
-        # Yangi group mavjudligini tekshirish
         group = db.query(Group).filter(Group.id == student_update.group_id).first()
         if not group:
             raise HTTPException(status_code=404, detail="Group not found")
